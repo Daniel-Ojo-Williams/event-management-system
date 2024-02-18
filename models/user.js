@@ -4,7 +4,7 @@ require("dotenv").config();
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class user extends Model {
+  class Users extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       return { ...this.get(), password: undefined };
     }
   }
-  user.init(
+  Users.init(
     {
       user_id: {
         allowNull: false,
@@ -52,8 +52,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "user",
+      modelName: "Users",
     }
   );
-  return user;
+  return Users;
 };

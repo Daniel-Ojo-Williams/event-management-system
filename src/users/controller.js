@@ -1,4 +1,4 @@
-const { user } = require("../../models");
+const { Users } = require("../../models");
 const { asyncWrapper } = require("../../utils");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -7,8 +7,8 @@ const bcrypt = require("bcrypt");
 const signUp = asyncWrapper(async (req, res) => {
   let { name, email, password } = req.body;
   if (!password) throw new Error("Please enter a password");
-  let user = user.build({ name, email, password });
-  await newUser.save();
+  let user = Users.build({ name, email, password });
+  await user.save();
 
   const privateKey = process.env.JWT_PRIVATE_KEY;
   const access_token = jwt.sign({ user }, privateKey, { expiresIn: "1h" });
@@ -22,13 +22,13 @@ const signUp = asyncWrapper(async (req, res) => {
 const logIn = asyncWrapper(async (req, res) => {
   let { email, password } = req.body;
 
-  let userFound = await user.findOne({
+  let user = await Users.findOne({
     where: { email },
   });
 
-  if (!userFound) throw new Error("Invalid credentials.");
+  if (!user) throw new Error("Invalid credentials.");
 
-  let userPassword = await userFound.password;
+  let userPassword = await user.password;
 
   const passwordMatch = bcrypt.compare(password, userPassword);
 
