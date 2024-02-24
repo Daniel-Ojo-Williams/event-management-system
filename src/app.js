@@ -5,6 +5,7 @@ const AuthRoute = require("./users/route.js");
 const EventRoute = require("./events/routes.js");
 const { globalErrorHandler } = require("../utils");
 const { authenticationMiddleWare } = require("../middlewares");
+const AttendanceRoute = require("./eventAttendance/route.js")
 
 const app = express();
 
@@ -15,8 +16,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use("/api", AuthRoute);
 
-app.use(authenticationMiddleWare);
+// app.use(authenticationMiddleWare);
 app.use("/api/events", EventRoute);
+app.use("/api/events", AttendanceRoute);
 
 app.use(globalErrorHandler);
 

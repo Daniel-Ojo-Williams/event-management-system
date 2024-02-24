@@ -12,6 +12,7 @@ module.exports = (err, req, res, next) => {
       message = "access token expired";
       statusCode = 401;
     };
+    console.log(err)
     res.status(statusCode).json({ error: message });
   } catch (error) {
     console.log(error.message);

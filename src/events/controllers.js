@@ -1,5 +1,7 @@
 const { Events } = require("../../models");
 const { asyncWrapper } = require("../../utils");
+const axios = require("axios");
+require("dotenv").config();
 
 // create an event
 const createEvent = asyncWrapper(async (req, res) => {
@@ -14,6 +16,8 @@ const createEvent = asyncWrapper(async (req, res) => {
     location,
     organizer_id,
   });
+  // --| generate unique url for each event for users to register for that particular event
+  
   await event.save();
   return res.status(201).json({error: false, message: event });
 });
@@ -76,10 +80,34 @@ const deleteEvent = asyncWrapper(async (req, res) => {
   res.status(200).json({ error: false, message: "Event deleted successfully" });
 });
 
+// generate short link for event attendance
+const generateShortLink = asyncWrapper(async(req, res) => {
+  // --| get event id from the request parameters
+  let { event_id } = req.params;
+
+  if (!event_id) throw new Error("Please provide event id to update");
+  // --| append the event id to the base url
+  // --| when the bitly link is access it redirects the user to registration form endpoint
+  let longUrl = `${process.env.BASE_URL}/registrationform/${event_id}`;
+
+  const response = await axios({
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.BITLY_ACCESS_KEY}`,
+      "Content-Type": "application/json",
+    },
+    url: "https://api-ssl.bitly.com/v4/shorten",
+    data: { long_url: `${longUrl}`, domain: "bit.ly" },
+  });
+
+  console.log(response.data);
+});
+
 module.exports = {
   createEvent,
   getEvent,
   getAllEvents,
   updateEvent,
   deleteEvent,
+  generateShortLink
 };
